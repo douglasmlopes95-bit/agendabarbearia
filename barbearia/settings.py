@@ -10,7 +10,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # -----------------------
 SECRET_KEY = 'nutxip-bicvo5-meJgud'  # Troque para uma chave secreta segura em produção
 DEBUG = True
-ALLOWED_HOSTS = []  # Adicione domínios em produção
+ALLOWED_HOSTS = ['agendabarbearia.onrender.com']  # Adicione outros domínios se necessário
 
 # -----------------------
 # Aplicativos instalados
