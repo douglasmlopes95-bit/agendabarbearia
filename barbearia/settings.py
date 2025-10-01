@@ -1,3 +1,5 @@
+# barbearia/settings.py
+
 import os
 from pathlib import Path
 import dj_database_url
@@ -13,10 +15,12 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = os.getenv("SECRET_KEY", "dev-secret-key")  # Render injeta automaticamente
 DEBUG = os.getenv("DEBUG", "False") == "True"
 
+# -----------------------
 # Hosts permitidos
+# -----------------------
 ALLOWED_HOSTS = os.getenv(
     "ALLOWED_HOSTS",
-    "agendabarbearia-web2.onrender.com,localhost,127.0.0.1"
+    "agendabarbearia-web2.onrender.com,agendabarbearia.onrender.com,localhost,127.0.0.1"
 ).split(",")
 
 # -----------------------
@@ -33,7 +37,7 @@ INSTALLED_APPS = [
 
     # Apps do sistema de agendamento
     'agenda',
-    'django_crispy_forms',
+    'django_crispy_forms',  # Forms bonitos e responsivos
 ]
 
 # -----------------------
@@ -94,7 +98,6 @@ DATABASES = {
 # Validação de senhas
 # -----------------------
 AUTH_PASSWORD_VALIDATORS = [
-    # Ative em produção se quiser políticas de senha mais fortes
     # {"NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator"},
     # {"NAME": "django.contrib.auth.password_validation.MinimumLengthValidator"},
     # {"NAME": "django.contrib.auth.password_validation.CommonPasswordValidator"},
