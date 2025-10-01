@@ -31,7 +31,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 
-    # App do sistema de agendamento
+    # Apps do sistema de agendamento
     'agenda',
 ]
 
@@ -143,3 +143,20 @@ LOGOUT_REDIRECT_URL = '/'
 # Email (apenas console no dev)
 # -----------------------
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+
+# -----------------------
+# Logging básico
+# -----------------------
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'console': {
+            'class': 'logging.StreamHandler',
+        },
+    },
+    'root': {
+        'handlers': ['console'],
+        'level': 'INFO',
+    },
+}
