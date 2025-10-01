@@ -16,7 +16,7 @@ DEBUG = os.getenv("DEBUG", "False") == "True"
 # Hosts permitidos
 ALLOWED_HOSTS = os.getenv(
     "ALLOWED_HOSTS",
-    "agendabarbearia.onrender.com,localhost,127.0.0.1"
+    "agendabarbearia-web2.onrender.com,localhost,127.0.0.1"
 ).split(",")
 
 # -----------------------
@@ -33,6 +33,7 @@ INSTALLED_APPS = [
 
     # Apps do sistema de agendamento
     'agenda',
+    'django_crispy_forms',
 ]
 
 # -----------------------
