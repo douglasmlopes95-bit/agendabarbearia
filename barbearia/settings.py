@@ -1,4 +1,6 @@
+import os
 from pathlib import Path
+import dj_database_url
 
 # -----------------------
 # Caminho base do projeto
@@ -8,9 +10,14 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # -----------------------
 # Segurança
 # -----------------------
-SECRET_KEY = 'nutxip-bicvo5-meJgud'  # Troque para uma chave secreta segura em produção
-DEBUG = True
-ALLOWED_HOSTS = ['agendabarbearia.onrender.com']  # Adicione outros domínios se necessário
+SECRET_KEY = os.getenv("SECRET_KEY", "dev-secret-key")  # Render injeta automaticamente
+DEBUG = os.getenv("DEBUG", "False") == "True"
+
+# Hosts permitidos
+ALLOWED_HOSTS = os.getenv(
+    "ALLOWED_HOSTS",
+    "agendabarbearia.onrender.com,localhost,127.0.0.1"
+).split(",")
 
 # -----------------------
 # Aplicativos instalados
@@ -33,6 +40,7 @@ INSTALLED_APPS = [
 # -----------------------
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',  # servir estáticos no Render
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -52,12 +60,12 @@ ROOT_URLCONF = 'barbearia.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [BASE_DIR / 'templates'],  # Diretório global de templates
+        'DIRS': [BASE_DIR / 'templates'],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
                 'django.template.context_processors.debug',
-                'django.template.context_processors.request',  # Necessário para login/logout
+                'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
             ],
@@ -74,21 +82,22 @@ WSGI_APPLICATION = 'barbearia.wsgi.application'
 # Banco de dados
 # -----------------------
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
-    }
+    "default": dj_database_url.config(
+        default=f"sqlite:///{BASE_DIR / 'db.sqlite3'}",  # fallback local
+        conn_max_age=600,
+        ssl_require=True  # obrigatório no Render com Postgres
+    )
 }
 
 # -----------------------
 # Validação de senhas
 # -----------------------
 AUTH_PASSWORD_VALIDATORS = [
-    # Em produção, habilite validação de senhas para segurança
-    # {'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator'},
-    # {'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator'},
-    # {'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator'},
-    # {'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator'},
+    # Ative em produção se quiser políticas de senha mais fortes
+    # {"NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator"},
+    # {"NAME": "django.contrib.auth.password_validation.MinimumLengthValidator"},
+    # {"NAME": "django.contrib.auth.password_validation.CommonPasswordValidator"},
+    # {"NAME": "django.contrib.auth.password_validation.NumericPasswordValidator"},
 ]
 
 # -----------------------
@@ -97,7 +106,6 @@ AUTH_PASSWORD_VALIDATORS = [
 LANGUAGE_CODE = 'pt-br'
 TIME_ZONE = 'America/Sao_Paulo'
 USE_I18N = True
-USE_L10N = True
 USE_TZ = True
 
 # -----------------------
@@ -105,10 +113,11 @@ USE_TZ = True
 # -----------------------
 STATIC_URL = '/static/'
 STATICFILES_DIRS = [BASE_DIR / "static"]
-STATIC_ROOT = BASE_DIR / "staticfiles"  # Para coleta em produção
+STATIC_ROOT = BASE_DIR / "staticfiles"
+STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 
 # -----------------------
-# Arquivos de mídia (upload de imagens, logos, etc.)
+# Arquivos de mídia
 # -----------------------
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
@@ -126,12 +135,11 @@ AUTH_USER_MODEL = "agenda.Usuario"
 # -----------------------
 # URLs de login/logout
 # -----------------------
-LOGIN_URL = '/login/'            # Página de login
-LOGIN_REDIRECT_URL = '/agenda/'  # Redirecionamento após login
-LOGOUT_REDIRECT_URL = '/'        # Redirecionamento após logout
+LOGIN_URL = '/login/'
+LOGIN_REDIRECT_URL = '/agenda/'
+LOGOUT_REDIRECT_URL = '/'
 
 # -----------------------
-# Configurações adicionais (opcional)
+# Email (apenas console no dev)
 # -----------------------
-# Email backend para notificações locais
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'

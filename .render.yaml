@@ -1,0 +1,13 @@
+services:
+  - type: web
+    name: agendabarbearia
+    env: python
+    buildCommand: "./build.sh"
+    startCommand: "gunicorn barbearia.wsgi:application --log-file -"
+    envVars:
+      - key: DJANGO_SETTINGS_MODULE
+        value: barbearia.settings
+      - key: PYTHON_VERSION
+        value: 3.11
+      - key: SECRET_KEY
+        generateValue: true
